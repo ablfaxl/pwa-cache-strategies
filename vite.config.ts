@@ -10,7 +10,8 @@ export default defineConfig({
       manifest: {
         name: "My PWA App",
         short_name: "PWA",
-        description: "My Progressive Web App",
+        description:
+          "A Progressive Web App with Stale-While-Revalidate caching",
         start_url: "/",
         display: "standalone",
         background_color: "#ffffff",
@@ -30,16 +31,38 @@ export default defineConfig({
       },
       workbox: {
         runtimeCaching: [
+          // API requests using Stale-While-Revalidate
           {
             urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
-            handler: "NetworkFirst",
+            handler: "StaleWhileRevalidate",
             options: {
               cacheName: "api-cache",
               expiration: {
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24, // 1 Day
               },
-              networkTimeoutSeconds: 10, // Fallback to cache if network fails within 10 seconds
+            },
+          },
+          // Cache CSS, JS with Stale-While-Revalidate
+          {
+            urlPattern: ({ request }) =>
+              request.destination === "style" ||
+              request.destination === "script",
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "static-resources",
+            },
+          },
+          // Images using Stale-While-Revalidate
+          {
+            urlPattern: ({ request }) => request.destination === "image",
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "image-cache",
+              expiration: {
+                maxEntries: 60,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
+              },
             },
           },
         ],
