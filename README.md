@@ -16,7 +16,7 @@ A React-based Progressive Web App (PWA) implemented with Vite, showcasing variou
 
 ### Prerequisites
 
-- Node.js (>=14.x)
+- Node.js (>=18.x)
 - npm (>=6.x) or yarn
 
 ### Installation
